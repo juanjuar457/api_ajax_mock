@@ -21,7 +21,7 @@ app.use( (req,res,next) => {
   res.header("Access-Control-Allow-Origin", "*"); //could put a list of ip or domain names.
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
   if(req.method === "OPTIONS"){
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,DELETE");
     return res.status(200).json({});
   }
   next();
@@ -60,7 +60,7 @@ app.get('/materials/:id', (req, res) => {
     });
 });
 
-// POST req for ne material IT WORKS, requires the 6 fields to post  
+// POST req for new material IT WORKS, requires the 6 fields to post  
 app.post('/materials', (req, res) => {
 	const requiredFields = ['vendor', 'quantity', 'product_name', 'catalog_number', 'unit_size', 'units'];
 	for (let i=0; i<requiredFields.length; i++) {
@@ -87,6 +87,30 @@ app.post('/materials', (req, res) => {
 			res.status(500).json({message: 'Internal server error'}); 
 			});
 });
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PUTPUTPUTPUTPUTPUTPUTPUTPU
+app.put("/materials", (req, res) => {
+  res.json({
+    response: "You sent me a PUT request to /ordered",
+    orderedId: req.params.mID,
+    body: req.body
+  })
+})
+
+//how would you add code to highlight a material on the client?? 
+app.put('/materials/:id', (req, res) => {
+  Material
+    // this is a convenience method Mongoose provides for searching
+    // by the object _id property
+    .findById(req.params.id)
+    .exec()
+    .then(material =>res.json(material.apiRepr()))
+    .catch(err => {
+      console.error(err);
+        res.status(500).json({message: 'Internal server error'})
+    });
+});
+
 //********* come back here ************
 //PUT /materials/:mID/ordered
 //Add color to indicate ordered material, indicate already ordered..

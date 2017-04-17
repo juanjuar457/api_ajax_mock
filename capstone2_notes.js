@@ -3,6 +3,15 @@
 //error occurs, express finds 1st error handling middleware
 //catch 404 and forward to error handler. 
 
+//OUR OLD POST REQ 
+    // $.post(url, JSON.stringify(material),  //just trying to get it to work, this is the post call we did the other night...
+    //    function() { 
+    //     state.requested_materials.push(material);
+    //     render_material_list(); 
+    //     console.log(state.requested_materials)
+    // }
+    //     );
+
 
 //error handler -- they have 4 params!!!  
 // app.use((err,req,res,next) => {

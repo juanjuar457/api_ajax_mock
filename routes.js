@@ -107,7 +107,7 @@ router.post('/materials', (req, res) => {
 
 //PUT /materials/:mID/ordered
 //Add color to indicate ordered material, indicate already ordered..
-router.put("/:mID/ordered", (req, res) => {
+app.put("/:mID/ordered", (req, res) => {
 	res.json({
 		response: "You sent me a PUT request to /ordered",
 		orderedId: req.params.mID,

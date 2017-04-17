@@ -12,8 +12,8 @@
 		<div class="container text-center">
 		      <h1 id="for_data" class="glyphicon glyphicon-pencil">ORDER FOR LATER</h1>
 		       <!--  <form class="col-lg-12 col-lg-offset-6 form-inline"> -->
-		       <form class="col-lg-12 form-inline">
-		       		<!-- above form had id of main_submit.. -->
+		       <form  id="main_submit" class="col-lg-12 form-inline">
+<!-- main submit === id on 15!  -->
 		          	<div class="input-group">
 		            	<input id="vendor" type="text" class="form-control form-inline" placeholder="Enter Vendor" required >  
 		          	</div><!-- /input-group -->
@@ -23,7 +23,7 @@
 		          	</div><!-- /input-group -->
 
 		            <div class="input-group">
-		            	<input id="product" type="text" class="form-control" placeholder="Enter Product Name" required>   
+		            	<input id="product_name" type="text" class="form-control" placeholder="Enter Product Name" required>   
 		          	</div><!-- /input-group -->
 
 		            <div class="input-group">
@@ -37,7 +37,7 @@
 		         	<div class="input-group">
 		            	<select id="units" class="form-control" required> </select>
 		          	</div><!-- /input-group -->           
-		          	<button id="main_submit" type="submit" class="btn btn-primary btn-lg btn-block">Add Material</button>
+		          	<button  type="submit" class="btn btn-primary btn-lg btn-block">Add Material</button>
 
 		          	<button type="submit" id="test-get">Test get button! </button>
 		      </form><!-- /.col-lg-6 -->
