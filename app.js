@@ -81,8 +81,10 @@ $('#main_submit').submit(function(event){ //id is in main_page.html
         data: JSON.stringify(material),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function() {
-            console.log('test-post')
+        success: function (data) {
+
+            console.log(data);
+            material.id = data.id; 
             state.requested_materials.push(material);
             render_material_list();
         }
@@ -106,7 +108,6 @@ $('#main_submit').submit(function(event){ //id is in main_page.html
 //changning this to be a delete, need to get the id of the objects and add that to 
 //a rolling var and be able to target 1 at a time to delete it if called, with if
 //statement. 
-
 $('#test-get').click(function(){ 
     var url = 'http://localhost:8080/materials';
     var blah = {};
@@ -114,22 +115,21 @@ $('#test-get').click(function(){
        function(data) { 
        console.log('test');   
        console.log(data);   
-       blah = data.materials[0].id
-       var arrayId = 0 
+       blah = data.materials[0].id // i can save the id 
+       var arrayId = []
        console.log(blah)
     var count = 0; 
         for(i = 0; i < blah.length; i++){
             // arrayId += blah.materials[i].id;
-            arrayId = 
+            //QQQ need to fix this, want the id from the obj pulled from the db and compare that to the id they
+            //selected on the client. 1st just want to get the id from the db object materials. 
+            
             count += 1; 
             arrayId = blah.materials[i].id ++;
             console.log(arrayId)
             console.log(count)
-        }
-    
-       
+        }  
        console.log(blah)
-
         // estyQuery(petStoreState(data));
         // console.log(state.pets) //from capstone 1
         }
@@ -171,12 +171,24 @@ $('#test-get').click(function(){
 //         event.currentTarget.addClass('.highlighted');
 //     })
 // }
-function highlight_material () {
-    console.log('test')
-    $(".example_entry").dblclick(function(){
-    $(this).addClass('highlighted');
-});
-} 
+//try other classes??? 
+$('#requested_materials').click(function (event) {
+    $(this).addClass('highlighted')
+})
+// $('.entry').click(function (event) {
+// event.currentTarget.addClass('highlighted')
+// })
+
+// $('#requested_materials').click(function (event) {
+//     $(this).addClass('highlighted');
+// })
+
+// function highlight_material () {
+//     console.log('test')
+//     $(".example_entry").click(function(){
+//     $(this).addClass('highlighted');
+// });
+// } 
 
 
 
@@ -286,38 +298,85 @@ function add_material () {
 
 }
 
-// function delete_material (id) {
-//     $.ajax({ 
-//         url: 'http://localhost:8080/materials?id=' + id ,
-//         type: 'DELETE',
-//         success: function (result) {
-//             for(i=0; i < state.requested_materials.length; i++){
-//                 if(id === state.requested_materials[i].id){
-//                     state.requested_materials.slice(i,1);
-//                     break;
-//                 }
+//alt use data prop it understands this.data.id , thats how it goes..  
+function delete_material(id) {    
+    $.ajax({ 
+        id: id,
+        url: 'http://localhost:8080/materials/' + id, 
+        type: 'DELETE',
+        success: function() {
+            for(i=0; i < state.requested_materials.length; i++){
+                console.log(this.id,state.requested_materials[i].id,this.id === state.requested_materials[i].id);
+                if(this.id === state.requested_materials[i].id){
+                    console.log('removing');
+                    state.requested_materials.slice(i,1);
+                    break;
+                }
 
-//             }
-//             render_material_list(); 
-//         }
+            }
 
-//     });
+            render_material_list(); 
 
-// }
+        }
+    });
 
+
+}
+//search for node.js plugins that use breakpoints....
+//find out how to breakpoint node.js, maybe plugin for sublime to do that...
+//probably best on chrome tools. 
+//or use breakpoints, not deleteing from dom, db is being deleted. maybe slice is wrong..
 function render_material_list () {
+     console.log('call see me twice.')
 	var dom = $('#requested_materials');
 	dom.empty(); //flushes out material
 
 	for(i=0; i < state.requested_materials.length; i++){
 		dom.append('<div class="example_entry">'+ state.requested_materials[i].product_name +' | count:'+ state.requested_materials[i].quantity + ' | ' + 
 			state.requested_materials[i].catalog_number + ' | '+ state.requested_materials[i].vendor + ' | ' + state.requested_materials[i].units + 
-            '<a onclick="delete_material('+ state.requested_materials[i].id +')"><i class="glyphicon glyphicon-remove pull-right"></i></a> </div> ')
+            '<i onclick="delete_material(\''+ state.requested_materials[i].id + '\')" class="glyphicon glyphicon-remove pull-right"></i></div> ')
 	}
 }
 
 
 //set up conditional to check for password entered client side in the index/admin.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
