@@ -30,7 +30,7 @@ app.use( (req,res,next) => {
 app.get('/materials', (req, res) => {
 	Material
 	.find()
-	.limit(100)
+	.limit(500)
 	.exec()
 	.then(materials => {
 		res.json({

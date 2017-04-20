@@ -61,7 +61,6 @@ var mock_data = {
 //CHECK THE REQS HOW MUCH NEEDS TO BE BUILT OUT FOR THE LOGIN PART, NOT REQURIED FOR THE NODE CAPSTONE, HOLD FOR LATER, ONCE REACT IS IN....
 //STILL GOTTA FIX THAT DEL CALL, AND ADD THE PUT... MAYBE USE A PUT FOR THE PAGE RELOAD??? 
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>> POST req, works great! NO ID IS RETURNED! 
 $('#main_submit').submit(function(event){ //id is in main_page.html
     event.preventDefault()
     var url = 'http://localhost:8080/materials'
@@ -73,8 +72,8 @@ $('#main_submit').submit(function(event){ //id is in main_page.html
         units: $('#units').val(),
         unit_size: $('#unit_size').val()
     } 
-    console.log(material) //is saving the vals entered... vals are coming from the fields entered. 
-    render_material_list();
+    // console.log(material) //is saving the vals entered... vals are coming from the fields entered. 
+    // render_material_list();
     $.ajax({
         type: "POST",
         url: url,
@@ -87,10 +86,12 @@ $('#main_submit').submit(function(event){ //id is in main_page.html
             material.id = data.id; 
             state.requested_materials.push(material);
             render_material_list();
+            continue_render();
+
         }
     }); 
-    render_material_list();
-    console.log(state.requested_materials);
+    // render_material_list();
+    // console.log(state.requested_materials);
     });
 
 
@@ -298,18 +299,27 @@ function add_material () {
 
 }
 
+function continue_render() { 
+    $('.example_entry').show(); 
+
+}
+
+
 //alt use data prop it understands this.data.id , thats how it goes..  
-function delete_material(id) {    
+function delete_material(id) {   
     $.ajax({ 
         id: id,
         url: 'http://localhost:8080/materials/' + id, 
+        // data: this.id, prop might work, not this way though.. 
         type: 'DELETE',
         success: function() {
             for(i=0; i < state.requested_materials.length; i++){
                 console.log(this.id,state.requested_materials[i].id,this.id === state.requested_materials[i].id);
                 if(this.id === state.requested_materials[i].id){
                     console.log('removing');
-                    state.requested_materials.slice(i,1);
+                    console.log(state.requested_materials)
+                    state.requested_materials.splice(i,1)
+                     //returns empty array... if slice(i,0)
                     break;
                 }
 
@@ -319,6 +329,9 @@ function delete_material(id) {
 
         }
     });
+
+
+
 
 
 }
