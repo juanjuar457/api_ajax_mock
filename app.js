@@ -54,7 +54,66 @@ var mock_data = {
 }; 
 
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>> STATE MODIFIERS<<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+function  init_main_form () {
+
+    for(i=0; i < state.form_data.units.length; i++){  //sets up the drop down with the units. 
+        $('#units').append('<option value="' + state.form_data.units[i].value +'">' + state.form_data.units[i].name +'</option>') 
+    };  
+
+};
+
+//MIGHT NEED TO ADJUST THIS LATER FOR LOGIN FUNCTIONS 
+init_main_form();
+
+//CONTROL ARM HERE 
+function add_material_click (event) {
+    event.preventDefault();
+    add_material(); 
+    render_material_list();
+}
+
+function add_material () { 
+
+    var material = {};  
+    material.product = $('#product').val();
+    state.requested_materials.push(material);
+    material.quantity = $('#quantity').val();
+    material.vendor = $('#vendor').val(); 
+    material.catalog_number = $('#catalog_number').val(); 
+    material.units = $('#units').val();
+
+}
+
+function setBackOrder(id){
+    var material = null;
+    for(i=0; i < state.requested_materials.length; i++){
+        if(this.id === state.requested_materials[i].id){
+            state.requested_materials[i].onBackOrder = !state.requested_materials[i].onBackOrder; 
+            material = state.requested_materialsp[i];
+            break; 
+        }
+    }
+
+    $.ajax({
+    id: id, 
+    url: 'http://localhost:8080/materials/' + id,
+    type: 'PUT', //should be POST
+    data: JSON.stringify(material),
+    success: function() {
+       
+            render_material_list();
+        }
+    }); //closes ajax 
+}
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>> EVENT LISTENERS<<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 $('#main_submit').submit(function(event){ //id is in main_page.html
     event.preventDefault()
@@ -84,22 +143,53 @@ $('#main_submit').submit(function(event){ //id is in main_page.html
     }); 
 });
 
+
+//WORKING PUT AND SETBACKORDER FUNCTION...
+//ajax, update state, call render material list to display 
+
+function delete_material( event, id) {   
+    // event.stopPropigation(); 
+    $.ajax({ 
+        id: id,
+        url: 'http://localhost:8080/materials/' + id, 
+        // data: this.id, prop might work, not this way though.. 
+        type: 'DELETE',
+        success: function() {
+            for(i=0; i < state.requested_materials.length; i++){
+                console.log(this.id,state.requested_materials[i].id,this.id === state.requested_materials[i].id);
+                if(this.id === state.requested_materials[i].id){
+                    state.requested_materials.splice(i,1)
+                     //returns empty array... if slice(i,0)
+                    break;
+                }
+
+            }
+
+            render_material_list(); 
+
+        }
+    });
+}
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//>>>>>>>>> EVENT LISTENERS<<<<<<<<<<<<<<<<
+//>>>>>>>>>RENDER STATE<<<<<<<<<<<<<<<<<<<<<
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-function  init_main_form () {
+function render_material_list() {
+     console.log('Test to render')  //app is getting here no problem -jj 
+    var dom = $('#requested_materials');
+    dom.empty(); //flushes out material
 
-    for(i=0; i < state.form_data.units.length; i++){  //sets up the drop down with the units. 
-        $('#units').append('<option value="' + state.form_data.units[i].value +'">' + state.form_data.units[i].name +'</option>') 
-    };  
+    for(i=0; i < state.requested_materials.length; i++){
+        dom.append('<div class="example_entry '+ (state.requested_materials[i].onBackOrder ? "onBackOrder" : "") + '" onclick="setBackOrder(\''+ state.requested_materials[i].id + '\')" >'+ state.requested_materials[i].product_name +' | count:'+ state.requested_materials[i].quantity + ' | ' + 
+            state.requested_materials[i].catalog_number + ' | '+ state.requested_materials[i].vendor + ' | ' + state.requested_materials[i].units + 
+            '<i onclick="delete_material(this, \''+ state.requested_materials[i].id + '\')" class="glyphicon glyphicon-remove pull-right"></i></div> ')
 
-};
+    }
+}
 
-//this will be moved, login 1st etc.... don't know where quite yet. 
-init_main_form();
 
-//IFEE 
+//IFEE  FOR ADMIN ***NOT IN USE FOR NODE CAPSTONE!
 (function () {
     $('#login_admin_btn').click(check_pass_admin);
     $('#login_btn').click(check_pass_guest); 
@@ -124,9 +214,6 @@ function toggle_login (e) {
         $('#guest_tab').addClass('active');
     }
 }
-
-
-
 
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -174,56 +261,10 @@ $('#test-get').click(function(){
         );
     });
 
-// $('#test-get').click(function() {
-//     delete_material();
-// })
-// function delete_material (data) {
-//     var idMaterials = 0 
-//     var materials = {}
-//     $.ajax({ 
-//         type: "GET",
-//         url: 'http://localhost:8080/materials/',
-//         data: JSON,
-//         contentType: "application/json; charset=utf-8",
-//         datatype: 'json',
-//         success: function () {
-//             var idMaterials = materials.id 
-//             console.log(idMaterials);
-//             }
-           
-//     });
 
-// }
-
-// highlight_material(); 
-
-// function highlight_material () {
-//     $('.example_entry').hover(function (event){
-//         event.currentTarget.addClass('.highlighted');
-//     })
-// }
-
-
-//try other classes??? 
-// $('#requested_materials').click(function (event) {
-//     $(this).addClass('highlighted')
-// })
-// $('.entry').click(function (event) {
-// event.currentTarget.addClass('highlighted')
-// })
-
-// $('#requested_materials').click(function (event) {
-//     $(this).addClass('highlighted');
-// })
-
-// function highlight_material () {
-//     console.log('test')
-//     $(".example_entry").click(function(){
-//     $(this).addClass('highlighted');
-// });
-// } 
-
-
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>FUNCTIONS FOR LATER USE <<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 function check_pass_admin (event) {
 
@@ -243,9 +284,6 @@ function check_pass_admin (event) {
 	}
 } 
 
-//need to redo top, not workin!  loop for admin???!
-
-//console log works here! 
 function check_pass_guest (event) {
 
 	event.preventDefault();
@@ -263,133 +301,6 @@ function check_pass_guest (event) {
 	};
 
 }
-
-//make alert box if correct or incorrect 
-//use conditional 
-
-//CONTROL ARM HERE 
-function add_material_click (event) {
-	event.preventDefault();
-	add_material(); 
-	render_material_list();
-}
-
-function add_material () { 
-	var material = {};	
-	
-	material.product = $('#product').val();
-	state.requested_materials.push(material);
-
-	material.quantity = $('#quantity').val();
-	// state.requested_materials.push(material); OOOOPS
-
-	material.vendor = $('#vendor').val(); //do same for rest, quantity prod cat and units 
-	// state.requested_materials.push(material);
-
-	material.catalog_number = $('#catalog_number').val(); 
-	// state.requested_materials.push(material);
-
-	material.units = $('#units').val();
-
-}
-
-
-
-
-//alt use data prop it understands this.data.id , thats how it goes..  
-function delete_material( event, id) {   
-    event.stopPropigation(); 
-    $.ajax({ 
-        id: id,
-        url: 'http://localhost:8080/materials/' + id, 
-        // data: this.id, prop might work, not this way though.. 
-        type: 'DELETE',
-        success: function() {
-            for(i=0; i < state.requested_materials.length; i++){
-                console.log(this.id,state.requested_materials[i].id,this.id === state.requested_materials[i].id);
-                if(this.id === state.requested_materials[i].id){
-                    state.requested_materials.splice(i,1)
-                     //returns empty array... if slice(i,0)
-                    break;
-                }
-
-            }
-
-            render_material_list(); 
-
-        }
-    });
-}
-//ajax, update state, call render material list to display 
-function setBackOrder(id){
-    var material = null;
-    for(i=0; i < state.requested_materials.length; i++){
-        if(this.id === state.requested_materials[i].id){
-            state.requested_materials[i].onBackOrder = !state.requested_materials[i].onBackOrder; 
-            material = state.requested_materialsp[i];
-            break; 
-        }
-    }
-
-    $.ajax({
-    id: id, 
-    url: 'http://localhost:8080/materials/' + id,
-    type: 'PUT', //should be POST
-    data: JSON.stringify(material),
-    success: function() {
-       
-            render_material_list();
-        }
-    }); //closes ajax 
-
-}
-
-
-function render_material_list() {
-     console.log('call see me twice.')
-	var dom = $('#requested_materials');
-	dom.empty(); //flushes out material
-
-	for(i=0; i < state.requested_materials.length; i++){
-		dom.append('<div class="example_entry '+ (state.requested_materials[i].onBackOrder ? "onBackOrder" : "") + '" onclick="setBackOrder(\''+ state.requested_materials[i].id + '\')" >'+ state.requested_materials[i].product_name +' | count:'+ state.requested_materials[i].quantity + ' | ' + 
-			state.requested_materials[i].catalog_number + ' | '+ state.requested_materials[i].vendor + ' | ' + state.requested_materials[i].units + 
-            '<i onclick="delete_material(this, \''+ state.requested_materials[i].id + '\')" class="glyphicon glyphicon-remove pull-right"></i></div> ')
-
-	}
-}
-
-//call the class onBackOrder
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
