@@ -1,4 +1,6 @@
-
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>> STATE OBJECT <<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 var state = {
 	form_data: {
 		units: [
@@ -52,14 +54,7 @@ var mock_data = {
 }; 
 
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>> 4/17 issues and kill list
-//storing multiple db's ??? 
-//QQQ how to have a db for materials and db for user-login info??? Do we manage that from the config??? 
-//need to add a get/materials ajax call to refresht the page, every so often?? like a reverse timeout? Possibly more elegant sol? 
-//NO ID IS RETURNED FROM THE DB AFTER POST REQ! 
-//POST IS FINALLY RETURNING 200'S WOOT
-//CHECK THE REQS HOW MUCH NEEDS TO BE BUILT OUT FOR THE LOGIN PART, NOT REQURIED FOR THE NODE CAPSTONE, HOLD FOR LATER, ONCE REACT IS IN....
-//STILL GOTTA FIX THAT DEL CALL, AND ADD THE PUT... MAYBE USE A PUT FOR THE PAGE RELOAD??? 
+
 
 $('#main_submit').submit(function(event){ //id is in main_page.html
     event.preventDefault()
@@ -72,8 +67,6 @@ $('#main_submit').submit(function(event){ //id is in main_page.html
         units: $('#units').val(),
         unit_size: $('#unit_size').val()
     } 
-    // console.log(material) //is saving the vals entered... vals are coming from the fields entered. 
-    // render_material_list();
     $.ajax({
         type: "POST",
         url: url,
@@ -86,15 +79,59 @@ $('#main_submit').submit(function(event){ //id is in main_page.html
             material.id = data.id; 
             state.requested_materials.push(material);
             render_material_list();
-            continue_render();
 
         }
     }); 
-    // render_material_list();
-    // console.log(state.requested_materials);
-    });
+});
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>> EVENT LISTENERS<<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+function  init_main_form () {
+
+    for(i=0; i < state.form_data.units.length; i++){  //sets up the drop down with the units. 
+        $('#units').append('<option value="' + state.form_data.units[i].value +'">' + state.form_data.units[i].name +'</option>') 
+    };  
+
+};
+
+//this will be moved, login 1st etc.... don't know where quite yet. 
+init_main_form();
+
+//IFEE 
+(function () {
+    $('#login_admin_btn').click(check_pass_admin);
+    $('#login_btn').click(check_pass_guest); 
+    $('#admin_login_form').hide();
+    $('#admin_tab').find('a').click(toggle_login);
+    $('#guest_tab').find('a').click(toggle_login);
+    //target the li href, check against the text, 
+})(); 
+
+function toggle_login (e) {
+    var tab = $(e.currentTarget).text().toLowerCase();
+    $('#admin_login_form').hide();
+    $('#admin_tab').removeClass('active');
+    $('#guest_login_form').hide();
+    $('#guest_tab').removeClass('active');
+
+    if (tab === 'admin login'){
+        $('#admin_login_form').show();
+        $('#admin_tab').addClass('active');
+    } else {
+        $('#guest_login_form').show();
+        $('#guest_tab').addClass('active');
+    }
+}
 
 
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>> ROUGH DRAFT AREA <<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // $('body').location.reload()  //>>>>>> to have the db reload the stuff on the browser?? 
 
@@ -158,13 +195,6 @@ $('#test-get').click(function(){
 
 // }
 
-
-//     var url = 'http://localhost:8080/materials'
-//     $.post(url,[],['string'],['JSON']);
-// });
-
-    // $('#add_material').click(add_material_click); 
-
 // highlight_material(); 
 
 // function highlight_material () {
@@ -172,10 +202,12 @@ $('#test-get').click(function(){
 //         event.currentTarget.addClass('.highlighted');
 //     })
 // }
+
+
 //try other classes??? 
-$('#requested_materials').click(function (event) {
-    $(this).addClass('highlighted')
-})
+// $('#requested_materials').click(function (event) {
+//     $(this).addClass('highlighted')
+// })
 // $('.entry').click(function (event) {
 // event.currentTarget.addClass('highlighted')
 // })
@@ -192,44 +224,6 @@ $('#requested_materials').click(function (event) {
 // } 
 
 
-
-
-function  init_main_form () {
-
-	for(i=0; i < state.form_data.units.length; i++){  //sets up the drop down with the units. 
-		$('#units').append('<option value="' + state.form_data.units[i].value +'">' + state.form_data.units[i].name +'</option>') 
-	};	
-
-};
-
-//this will be moved, login 1st etc.... don't know where quite yet. 
-init_main_form();
-
-//IFEE 
-(function () {
-	$('#login_admin_btn').click(check_pass_admin);
-	$('#login_btn').click(check_pass_guest); 
-	$('#admin_login_form').hide();
-	$('#admin_tab').find('a').click(toggle_login);
-	$('#guest_tab').find('a').click(toggle_login);
-	//target the li href, check against the text, 
-})(); 
-
-function toggle_login (e) {
-	var tab = $(e.currentTarget).text().toLowerCase();
-	$('#admin_login_form').hide();
-	$('#admin_tab').removeClass('active');
-	$('#guest_login_form').hide();
-	$('#guest_tab').removeClass('active');
-
-	if (tab === 'admin login'){
-		$('#admin_login_form').show();
-		$('#admin_tab').addClass('active');
-	} else {
-		$('#guest_login_form').show();
-		$('#guest_tab').addClass('active');
-	}
-}
 
 function check_pass_admin (event) {
 
@@ -299,14 +293,12 @@ function add_material () {
 
 }
 
-function continue_render() { 
-    $('.example_entry').show(); 
 
-}
 
 
 //alt use data prop it understands this.data.id , thats how it goes..  
-function delete_material(id) {   
+function delete_material( event, id) {   
+    event.stopPropigation(); 
     $.ajax({ 
         id: id,
         url: 'http://localhost:8080/materials/' + id, 
@@ -316,8 +308,6 @@ function delete_material(id) {
             for(i=0; i < state.requested_materials.length; i++){
                 console.log(this.id,state.requested_materials[i].id,this.id === state.requested_materials[i].id);
                 if(this.id === state.requested_materials[i].id){
-                    console.log('removing');
-                    console.log(state.requested_materials)
                     state.requested_materials.splice(i,1)
                      //returns empty array... if slice(i,0)
                     break;
@@ -329,30 +319,47 @@ function delete_material(id) {
 
         }
     });
+}
+//ajax, update state, call render material list to display 
+function setBackOrder(id){
+    var material = null;
+    for(i=0; i < state.requested_materials.length; i++){
+        if(this.id === state.requested_materials[i].id){
+            state.requested_materials[i].onBackOrder = !state.requested_materials[i].onBackOrder; 
+            material = state.requested_materialsp[i];
+            break; 
+        }
+    }
 
-
-
-
+    $.ajax({
+    id: id, 
+    url: 'http://localhost:8080/materials/' + id,
+    type: 'PUT', //should be POST
+    data: JSON.stringify(material),
+    success: function() {
+       
+            render_material_list();
+        }
+    }); //closes ajax 
 
 }
-//search for node.js plugins that use breakpoints....
-//find out how to breakpoint node.js, maybe plugin for sublime to do that...
-//probably best on chrome tools. 
-//or use breakpoints, not deleteing from dom, db is being deleted. maybe slice is wrong..
-function render_material_list () {
+
+
+function render_material_list() {
      console.log('call see me twice.')
 	var dom = $('#requested_materials');
 	dom.empty(); //flushes out material
 
 	for(i=0; i < state.requested_materials.length; i++){
-		dom.append('<div class="example_entry">'+ state.requested_materials[i].product_name +' | count:'+ state.requested_materials[i].quantity + ' | ' + 
+		dom.append('<div class="example_entry '+ (state.requested_materials[i].onBackOrder ? "onBackOrder" : "") + '" onclick="setBackOrder(\''+ state.requested_materials[i].id + '\')" >'+ state.requested_materials[i].product_name +' | count:'+ state.requested_materials[i].quantity + ' | ' + 
 			state.requested_materials[i].catalog_number + ' | '+ state.requested_materials[i].vendor + ' | ' + state.requested_materials[i].units + 
-            '<i onclick="delete_material(\''+ state.requested_materials[i].id + '\')" class="glyphicon glyphicon-remove pull-right"></i></div> ')
+            '<i onclick="delete_material(this, \''+ state.requested_materials[i].id + '\')" class="glyphicon glyphicon-remove pull-right"></i></div> ')
+
 	}
 }
 
+//call the class onBackOrder
 
-//set up conditional to check for password entered client side in the index/admin.html
 
 
 

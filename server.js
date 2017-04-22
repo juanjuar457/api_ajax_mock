@@ -30,7 +30,7 @@ app.use( (req,res,next) => {
 app.get('/materials', (req, res) => {
 	Material
 	.find()
-	.limit(500)
+	.limit(1000)
 	.exec()
 	.then(materials => {
 		res.json({
@@ -88,21 +88,20 @@ app.post('/materials', (req, res) => {
 			});
 });
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PUTPUTPUTPUTPUTPUTPUTPUTPU
-app.put("/materials", (req, res) => {
-  res.json({
-    response: "You sent me a PUT request to /ordered",
-    orderedId: req.params.mID,
-    body: req.body
-  })
-})
+// //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PUTPUTPUTPUTPUTPUTPUTPUTPU
+// app.put("/materials", (req, res) => {
+//   res.json({
+//     response: "You sent me a PUT request to /ordered",
+//     orderedId: req.params.mID,
+//     body: req.body
+//   })
+// })
 
 //how would you add code to highlight a material on the client?? 
-app.put('/materials/:id', (req, res) => {
+app.put('/materials', (req, res) => {
   Material
-    // this is a convenience method Mongoose provides for searching
-    // by the object _id property
-    .findById(req.params.id)
+  res.json({response: "test put"})
+    .findOneAndUpdate({_id: req.body.data.id},{ $set: { onBackOrder: req.body.data.onBackOrder }})
     .exec()
     .then(material =>res.json(material.apiRepr()))
     .catch(err => {
@@ -111,17 +110,36 @@ app.put('/materials/:id', (req, res) => {
     });
 });
 
-//********* come back here ************
-//PUT /materials/:mID/ordered
-//Add color to indicate ordered material, indicate already ordered..
-//Not sure how to implement to do something that would do a PUT operation on materials??
-// app.put("/:mID/ordered", (req, res) => {
-// 	res.json({
-// 		response: "You sent me a PUT request to /ordered",
-// 		orderedId: req.params.mID,
-// 		body: req.body
-// 	})
-// })
+
+
+
+
+// app.put('/posts/:id', (req, res) => {
+//   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+//     res.status(400).json({
+//       error: 'Request path id and request body id values must match'
+//     });
+//   }
+
+//   const updated = {};
+//   const updateableFields = ['title', 'content', 'author'];
+//   updateableFields.forEach(field => {
+//     if (field in req.body) {
+//       updated[field] = req.body[field];
+//     }
+//   });
+
+//   BlogPost
+//     .findByIdAndUpdate(req.params.id, {$set: updated}, {new: true})
+//     .exec()
+//     .then(updatedPost => res.status(201).json(updatedPost.apiRepr()))
+//     .catch(err => res.status(500).json({message: 'Something went wrong'}));
+// });
+
+
+//re check findOoneAndUpdate() in ex, 
+
+
 
 //DELETE  /materials/:mID/ordered
 //need to go back to F/e to make sure DEL button is added to the cells 

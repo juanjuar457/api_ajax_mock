@@ -11,7 +11,8 @@ const MaterialSchema = Schema({
 	catalog_number: String, 
 	unit_size: String, 
 	units: String,
-	createDate: {type: Date, default: Date.now} //
+	createDate: {type: Date, default: Date.now}, 
+  onBackOrder: Boolean 
 });
 
 //not sure how to structre this? ALso don't we need an env file??? 
@@ -41,7 +42,8 @@ MaterialSchema.methods.apiRepr = function() {
     catalog_number: this.catalog_number,
     unit_size: this.unit_size,
     units: this.units,
-    createdDate: this.createdDate
+    createdDate: this.createdDate,
+    onBackOrder: this.onBackOrder
   };
 }
 
