@@ -1,17 +1,22 @@
 {
-  "name": "qa_rest_api",
-  "version": "1.0.0",
-  "description": "",
+  "name": "orderforlater",
+  "version": "0.0.1",
+  "description": "node capstone",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "morgan": "^1.7.0"
-  }
+    "express": "^4.12.4",
+    "mongoose": "^4.7.1",
+    "morgan": "^1.7.0",
+    "uuid": "^2.0.3"
+  },
+  "keywords": [
+    "node",
+    "hyperdev",
+    "express"
+  ],
+  "license": "UNLICENSED"
 }

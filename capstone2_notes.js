@@ -1,3 +1,53 @@
+//SERVER JS NOTES 
+
+// using CORS for temporary sol to the browser from the DB SOL 
+// app.use( (req,res,next) => {
+//   res.header("Access-Control-Allow-Origin", "*"); //could put a list of ip or domain names.
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+//   if(req.method === "OPTIONS"){
+//     res.header("Access-Control-Allow-Methods", "PUT,POST,DELETE");
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
+
+//POST EXAMPLE >> REFACTOR ME!! 
+// app.put('/posts/:id', (req, res) => {
+//   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+//     res.status(400).json({
+//       error: 'Request path id and request body id values must match'
+//     });
+//   }
+
+//   const updated = {};
+//   const updateableFields = ['title', 'content', 'author'];
+//   updateableFields.forEach(field => {
+//     if (field in req.body) {
+//       updated[field] = req.body[field];
+//     }
+//   });
+
+//   BlogPost
+//     .findByIdAndUpdate(req.params.id, {$set: updated}, {new: true})
+//     .exec()
+//     .then(updatedPost => res.status(201).json(updatedPost.apiRepr()))
+//     .catch(err => res.status(500).json({message: 'Something went wrong'}));
+// });
+
+// app.listen(process.env.PORT || 8080, () => {
+//   console.log(`Order for later is listening on port: ${process.env.PORT || 8080}`);
+// })
+
+
+
+// >>>>>>>>NOTE!!! <<<<<<<<<<<<<<<<<<
+//Express must parse incoming JSON with middleware!! it can't do it on its own! 
+
+//also will need the users model...
+
+// app.use(logger("dev")); //configures middlware for color codes in our api respones. 
+
+
 //capstone 2 notes fix me later 4/14 - JJ
 
 //error occurs, express finds 1st error handling middleware
