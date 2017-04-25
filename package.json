@@ -4,7 +4,8 @@
   "description": "node capstone",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -18,5 +19,11 @@
     "hyperdev",
     "express"
   ],
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+    "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "faker": "^3.1.0",
+    "mocha": "^3.2.0"
+  }
 }

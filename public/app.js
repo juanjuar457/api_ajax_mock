@@ -168,6 +168,12 @@ function delete_material( event, id) {
     });
 }
 
+// $('#requested_materials').click().removeClass('example_entry');
+
+$('.example_entry').click( function(event) {
+   $(this).addClass('highlighted');
+})
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>RENDER STATE<<<<<<<<<<<<<<<<<<<<<
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -179,13 +185,17 @@ function render_material_list() {
     dom.empty(); //flushes out material
     
     for(i=0; i < state.requested_materials.length; i++){
-        dom.append('<div class="example_entry '+ (state.requested_materials[i].onBackOrder ? "onBackOrder" : "") + '" onclick="setBackOrder(\''+ state.requested_materials[i].id + '\')" >'+ state.requested_materials[i].product_name +' | count:'+ state.requested_materials[i].quantity + ' | ' + 
+        dom.append('<div class="example_entry'+ (state.requested_materials[i].onBackOrder ? "onBackOrder" : "") + '" onclick="setBackOrder(\'' + 
+            state.requested_materials[i].id + '\')" >'+ state.requested_materials[i].product_name +' | count:'+ state.requested_materials[i].quantity + ' | ' + 
             state.requested_materials[i].catalog_number + ' | '+ state.requested_materials[i].vendor + ' | ' + state.requested_materials[i].units + 
             '<i onclick="delete_material(this, \''+ state.requested_materials[i].id + '\')" class="glyphicon glyphicon-remove pull-right"></i></div> ')
 
     }
 }
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>FUNCTIONS FOR LATER USE / NOT IN USE IN NODE CAPSTONE!! <<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //IFEE  FOR ADMIN ***NOT IN USE FOR NODE CAPSTONE!
 (function () {
@@ -213,56 +223,9 @@ function toggle_login (e) {
     }
 }
 
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//>>>>>>>>> ROUGH DRAFT AREA <<<<<<<<<<<<<
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// $('body').location.reload()  //>>>>>> to have the db reload the stuff on the browser?? 
-
-//>>>>>>Example post from jquery docs
-// $.post( "ajax/test.html", function( data ) {
-//   $( ".result" ).html( data );
-
-//renderpost goes here, then need one for get and put a delete ajax call!!
-// });
-
-
-//changning this to be a delete, need to get the id of the objects and add that to 
-//a rolling var and be able to target 1 at a time to delete it if called, with if
-//statement. 
-$('#test-get').click(function(){ 
-    var url = 'http://localhost:8080/materials';
-    var blah = {};
-    $.getJSON(url,
-       function(data) { 
-       console.log('test');   
-       console.log(data);   
-       blah = data.materials[0].id // i can save the id 
-       var arrayId = []
-       console.log(blah)
-    var count = 0; 
-        for(i = 0; i < blah.length; i++){
-            // arrayId += blah.materials[i].id;
-            //QQQ need to fix this, want the id from the obj pulled from the db and compare that to the id they
-            //selected on the client. 1st just want to get the id from the db object materials. 
-            
-            count += 1; 
-            arrayId = blah.materials[i].id ++;
-            console.log(arrayId)
-            console.log(count)
-        }  
-       console.log(blah)
-        // estyQuery(petStoreState(data));
-        // console.log(state.pets) //from capstone 1
-        }
-        );
-    });
-
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//>>>>>>>>>FUNCTIONS FOR LATER USE <<<<<<<<<
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>FUNCTIONS FOR LATER USE / NOT IN USE IN NODE CAPSTONE!! <<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 function check_pass_admin (event) {
 

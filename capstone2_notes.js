@@ -1,5 +1,60 @@
 //SERVER JS NOTES 
 
+//alt way of doing body parser 
+// app.use(jsonParser);
+// const routes = require("./routes");  //junkroutes at the moment.. 4/13 
+// const jsonParser = require("body-parser").json();
+//how would you add code to highlight a material on the client?? 
+// app.put('/materials', (req, res) => {
+//   console.log(req.body);
+//   res.json(req.body.name).end();
+//   // Material
+//   // res.json({response: "material on back order"})
+//   //   .findOneAndUpdate({_id: id},{ $set: { onBackOrder: query.body.data.onBackOrder}}, )
+//   //   .exec()
+//   //   .then(material =>res.json(material.apiRepr()))
+//   //   .catch(err => {
+//   //     console.error(err);
+//   //       res.status(500).json({message: 'Internal server error'})
+//   //   });
+// });
+
+//look up PUT endpoints, look at all the ex's if not sure still... d
+//need callback, as far as the args, not sure how they are arranged.. confusing since ex's are in 
+//ES5 not ES6... 
+
+//mongoose docs for example of PUT 
+  // if a model is passed in instead of an id
+
+//   if (id instanceof Document) {
+//     id = id._id;
+//   }
+
+//   return this.findOneAndUpdate.call(this, {_id: id}, update, options, callback);
+// };
+//thinkful example for put's 
+// app.put('/posts/:id', (req, res) => {
+//   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+//     res.status(400).json({
+//       error: 'Request path id and request body id values must match'
+//     });
+//   }
+
+//   const updated = {};
+//   const updateableFields = ['title', 'content', 'author'];
+//   updateableFields.forEach(field => {
+//     if (field in req.body) {
+//       updated[field] = req.body[field];
+//     }
+//   });
+
+//   BlogPost
+//     .findByIdAndUpdate(req.params.id, {$set: updated}, {new: true})
+//     .exec()
+//     .then(updatedPost => res.status(201).json(updatedPost.apiRepr()))
+//     .catch(err => res.status(500).json({message: 'Something went wrong'}));
+// });
+
 // using CORS for temporary sol to the browser from the DB SOL 
 // app.use( (req,res,next) => {
 //   res.header("Access-Control-Allow-Origin", "*"); //could put a list of ip or domain names.

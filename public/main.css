@@ -3,6 +3,28 @@
 	font-weight: 5px; 
 	font-size: 25px;
 }
+.future_features {
+	font-weight: 10%;
+	text-align: left;
+}
+.example_entryonBackOrder {
+	color: #FF4500;
+	max-width: auto; 
+	border-style: solid;
+	border-color: white;
+	padding: 10px;
+	margin: 20px;
+	text-align: center;
+}
+.highlighted {
+	color: #FF4500;
+	max-width: auto; 
+	border-style: solid;
+	border-color: white;
+	padding: 10px;
+	margin: 20px;
+	text-align: center;
+}
 
 .cap_desc {
 	color: white;
@@ -74,5 +96,6 @@ body {
 .example_entry:hover {
     color: #D3D3D3;
 }
+
 
 

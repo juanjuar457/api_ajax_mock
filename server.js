@@ -1,23 +1,23 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
-// const routes = require("./routes");  //junkroutes at the moment.. 4/13 
 const morgan = require("morgan"); 
 const mongoose = require("mongoose"); 
-// const jsonParser = require("body-parser").json();
 const {PORT, DATABASE_URL} = require('./config');
 const models = require('./models'); 
 const Material = models.Material;
 const User = models.User; 
-// app.use(jsonParser);
+
 app.use(morgan('common'));
 app.use(bodyParser.json());
+
 mongoose.Promise = global.Promise;
 
-app.use(express.static('public'))
+app.use(express.static('public')); // for serving static files in express
 
-
-
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>GET ENDPOINTS <<<<<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 app.get('/materials', (req, res) => {
 	Material
@@ -37,8 +37,7 @@ app.get('/materials', (req, res) => {
 		});
 }); 
 
-
-//get request for materials by id 
+//>>>>>>>>>NOT IN USE IN NODE CAPSTONE - FROM CLEINT SIDE 4/22<<<<<<<<<<<<<<<<<<<<
 app.get('/materials/:id', (req, res) => {
   Material
     // this is a convenience method Mongoose provides for searching
@@ -52,7 +51,10 @@ app.get('/materials/:id', (req, res) => {
     });
 });
 
-// POST req for new material IT WORKS, requires the 6 fields to post  
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>POST ENDPOINTS <<<<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
+
 app.post('/materials', (req, res) => {
   console.log(req.body);
 	const requiredFields = ['vendor', 'quantity', 'product_name', 'catalog_number', 'unit_size', 'units'];
@@ -80,6 +82,10 @@ app.post('/materials', (req, res) => {
 			res.status(500).json({message: 'Internal server error'}); 
 			});
 });
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>PUT ENDPOINTS <<<<<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
 
 app.put('/materials', (req, res) => {
   console.log(req.body);
@@ -109,64 +115,10 @@ app.put('/materials', (req, res) => {
       });
 });
 
-//how would you add code to highlight a material on the client?? 
-// app.put('/materials', (req, res) => {
-//   console.log(req.body);
-//   res.json(req.body.name).end();
-//   // Material
-//   // res.json({response: "material on back order"})
-//   //   .findOneAndUpdate({_id: id},{ $set: { onBackOrder: query.body.data.onBackOrder}}, )
-//   //   .exec()
-//   //   .then(material =>res.json(material.apiRepr()))
-//   //   .catch(err => {
-//   //     console.error(err);
-//   //       res.status(500).json({message: 'Internal server error'})
-//   //   });
-// });
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>DELETE ENDPOINTS <<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
 
-//look up PUT endpoints, look at all the ex's if not sure still... d
-//need callback, as far as the args, not sure how they are arranged.. confusing since ex's are in 
-//ES5 not ES6... 
-
-//mongoose docs for example of PUT 
-  // if a model is passed in instead of an id
-
-//   if (id instanceof Document) {
-//     id = id._id;
-//   }
-
-//   return this.findOneAndUpdate.call(this, {_id: id}, update, options, callback);
-// };
-//thinkful example for put's 
-// app.put('/posts/:id', (req, res) => {
-//   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-//     res.status(400).json({
-//       error: 'Request path id and request body id values must match'
-//     });
-//   }
-
-//   const updated = {};
-//   const updateableFields = ['title', 'content', 'author'];
-//   updateableFields.forEach(field => {
-//     if (field in req.body) {
-//       updated[field] = req.body[field];
-//     }
-//   });
-
-//   BlogPost
-//     .findByIdAndUpdate(req.params.id, {$set: updated}, {new: true})
-//     .exec()
-//     .then(updatedPost => res.status(201).json(updatedPost.apiRepr()))
-//     .catch(err => res.status(500).json({message: 'Something went wrong'}));
-// });
-
-
-
-
-//DELETE  /materials/:mID/ordered
-//need to go back to F/e to make sure DEL button is added to the cells 
-//Ajax & jquery calls.... 
-//Add color to indicate ordered material, indicate already ordered..
 app.delete('/materials/:id', (req, res) => {
   console.log('delete materials', req.params.id);
   Material
@@ -181,9 +133,10 @@ app.delete('/materials/:id', (req, res) => {
     });
 });
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>RUN/CLOSE SERVER <<<<<<<<<<<<<<<<
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
 
-
-//>>>>>start of run / close server....
 let server;
 
 // this function connects to our database, then starts the server
@@ -205,8 +158,7 @@ function runServer(databaseUrl=DATABASE_URL, port=PORT) {
   });
 }
 
-// this function closes the server, and returns a promise. we'll
-// use it in our integration tests later.
+//closeServer returns promise, we use for testing later...
 function closeServer() {
   return mongoose.disconnect().then(() => {
      return new Promise((resolve, reject) => {
