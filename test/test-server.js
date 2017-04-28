@@ -25,16 +25,44 @@ function seedMaterialData() {
   return Material.insertMany(seedData);
 }
 
+function generateQuantity(){
+	console.log('gen quantity')
+	const quantity = [
+	'1', '2','3','4'];
+	return quantity[Math.floor(Math.random() * quantity.length)];
+}
+
+function generateProductName() {
+	const productName = ["Testosterone", "Progesterone", "Pregnenolone"];
+	return productName[Math.floor(Math.random() * productName.length)];
+}
+
+function generateCatalogNumber() {
+	const catalogNumber = ["1234","1234566","1231111"];
+	return catalogNumber[Math.floor(Math.random() * catalogNumber.length)];
+}
+
+function generateUnitSize() {
+	const unitSize = ["1000", "1", "10"]; 
+	return unitSize[Math.floor(Math.random() * unitSize.length)]; 
+}
+
+function generateUnits() {
+	const units = ["grams", "killograms", "milliliters"];
+	return units[Math.floor(Math.random() * units.length)]; 
+}
 //note how the functions call other functions to about the module to execute the tests...
 //to execute on the tests...
 function generateMaterialData() {
   return {
-    vendor: generateVendor(),
-    quantity: generateQuantity(),
-    product_name: generateProductName(),
+    // vendor: faker.vendor(), //not sure whats up with the faker npm!
+    //generateVendor(),
+    quantity: generateQuantity(), //make function for this  
+    product_name: generateProductName(), 
     catalog_number: generateCatalogNumber(),
     unit_size: generateUnitSize(),
     units: generateUnits(), 
+
 	}    
 }
 
@@ -70,13 +98,13 @@ describe('Material API resource', function() {
  // //whole thing is wrapped in a describe, like unit tests examples... 
 	describe('DELETE endpoint', function() {
 	    it('delete a material by id', function() {
-	      let restaurant;
+	      let material;
 	      return Material
 	        .findOne()
 	        .exec()
 	        .then(function(_material) {
-	          material = _materials;
-	          return chai.request(app).delete(`/materials/${materials.id}`);
+	          material = _material;
+	          return chai.request(app).delete(`/material/${material.id}`);
 	        })
 	        .then(function(res) {
 	          res.should.have.status(204);
@@ -87,7 +115,7 @@ describe('Material API resource', function() {
 	          // doesn't work. so `_restaurant.should.be.null` would raise
 	          // an error. `should.be.null(_restaurant)` is how we can
 	          // make assertions about a null value.
-	          should.not.exist(_restaurant);
+	          should.not.exist(_material);
 	        })
 	    })    
 	})
