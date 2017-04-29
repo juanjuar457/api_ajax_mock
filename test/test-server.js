@@ -18,9 +18,9 @@ function seedMaterialData() {
   console.info('seeding Material data');
   const seedData = [];
 
-  for (let i=1; i<=10; i++) {
-    seedData.push(generateMaterialData());
-  }
+  // for (let i=1; i<=10; i++) {
+  //   seedData.push(generateMaterialData());
+  // }
   // this will return a promise
   return Material.insertMany(seedData);
 }
@@ -74,7 +74,7 @@ function generateMaterialData() {
 
 function tearDownDb() {
     console.warn('Deleting database');
-    return mongoose.connection.dropDatabase();
+    // return mongoose.connection.dropDatabase();
 }
 
 describe('Material API resource', function() {
@@ -104,7 +104,8 @@ describe('Material API resource', function() {
 	        .exec()
 	        .then(function(_material) {
 	          material = _material;
-	          return chai.request(app).delete(`/materials/${material.id}`);
+            console.log(material);
+	          return chai.request(app).delete(`/materials/${material._id}`);
 	        })
 	        .then(function(res) {
 	          res.should.have.status(204);
@@ -179,74 +180,72 @@ describe('Material API resource', function() {
         	});
    		 });
   	});
-	   describe('POST endpoint test ', function() {
-    // strategy: make a POST request with data,
-    // then prove that the restaurant we get back has
-    // right keys, and that `id` is there (which means
-    // the data was inserted into db)
-    it('should add a new material', function() {
-
-      const newMaterial = generateMaterialData();
-      let mostRecentGrade;
-
-      return chai.request(app)
-        .post('/materials')
-        .send(newMaterial)
-        .then(function(res) {
-          res.should.have.status(201);
-          res.should.be.json;
-          res.body.should.be.a('object');
-          res.body.should.include.keys(
-            'id', 'vendor', 'quantity', 'product_name', 'catalog_number', 'unit_size','units');
-                  // cause Mongo should have created id on insertion
-          res.body.id.should.not.be.null;
-          res.body.vendor.should.equal(newMaterial.vendor);
-          res.body.quantity.should.equal(newMaterial.quantity);
-          res.body.product_name.should.equal(newMaterial.product_name);
-          res.body.catalog_number.should.equal(newMaterial.catalog_number);
-          res.body.unit_size.should.equal(newMaterial.unit_size);
-          res.body.units.should.equal(newMaterial.units);
-          return Material.findById(res.body.id);
-        })
-        .then(function(material) {
-          material.vendor.should.equal(newMaterial.vendor);
-          material.quantity.should.equal(newMaterial.quantity);
-          material.product_name.should.equal(newMaterial.product_name);
-          material.catalog_number.should.equal(newMaterial.catalog_number);
-          material.unit_size.should.equal(newMaterial.unit_size)
-          material.units.should.equal(newMaterial.units)
-        });
+    describe('PUT endpoint', function() {
+    it('should update material with onBackOrder', function() {
+      var updateData = null;
+      return Material
+      .findOne()
+      .exec()
+      .then(function(material) {
+        updateData = material.apiRepr();
+        updateData.onBackOrder = !updateData.onBackOrder
+        return chai.request(app)
+          .put('/materials') //alt below
+          // .put('/materials/${material.id}')
+          .send(updateData); 
+      })
+      .then(function(res) {
+        res.should.have.status(201);
+        return Material.findById(updateData.id).exec();     
+      })
+      then(function(material) {
+        material.onBackOrder.should.equal(!updateData.onBackOrder);
+      });
     });
   });
+	 //   describe('POST endpoint test ', function() {
+  //   // strategy: make a POST request with data,
+  //   // then prove that the restaurant we get back has
+  //   // right keys, and that `id` is there (which means
+  //   // the data was inserted into db)
+  //   it('should add a new material', function() {
+
+  //     const newMaterial = generateMaterialData();
+  //     let mostRecentGrade;
+
+  //     return chai.request(app)
+  //       .post('/materials')
+  //       .send(newMaterial)
+  //       .then(function(res) {
+  //         res.should.have.status(201);
+  //         res.should.be.json;
+  //         res.body.should.be.a('object');
+  //         res.body.should.include.keys(
+  //           'id', 'vendor', 'quantity', 'product_name', 'catalog_number', 'unit_size','units');
+  //                 // cause Mongo should have created id on insertion
+  //         res.body.id.should.not.be.null;
+  //         res.body.vendor.should.equal(newMaterial.vendor);
+  //         res.body.quantity.should.equal(newMaterial.quantity);
+  //         res.body.product_name.should.equal(newMaterial.product_name);
+  //         res.body.catalog_number.should.equal(newMaterial.catalog_number);
+  //         res.body.unit_size.should.equal(newMaterial.unit_size);
+  //         res.body.units.should.equal(newMaterial.units);
+  //         return Material.findById(res.body.id);
+  //       })
+  //       .then(function(material) {
+  //         material.vendor.should.equal(newMaterial.vendor);
+  //         material.quantity.should.equal(newMaterial.quantity);
+  //         material.product_name.should.equal(newMaterial.product_name);
+  //         material.catalog_number.should.equal(newMaterial.catalog_number);
+  //         material.unit_size.should.equal(newMaterial.unit_size)
+  //         material.units.should.equal(newMaterial.units)
+  //       });
+  //   });
+  // });
 }); 
 	//everything is wrapped in the 1st describe from the top! 
 	//**************PUT TEST 	
 	//should it have update data with everything?? 
 	//we're adding onBackOrder with the dom logic function on the client... doing ajax 
 	//call inside! 
-	// describe('PUT endpoint', function() {
-	// 	it('should update fields you send over', function() {
-	// 		const updateData = {
-	// 			onBackOrder: 
-	// 		}; 
 
-	// 		return Material
-	// 		.findOne()
-	// 		.exec()
-	// 		.then(function(material) {
-	// 			updateData.id = material.id; 
-	// 			return chai.request(app)
-	// 				.put('/materials/onBackOrder') //alt below
-	// 				// .put('/materials/${material.id}')
-	// 				.send(updateData); 
-	// 		})
-	// 		.then(function(res) {
-	// 			res.should.have.status(204);
-
-	// 			return Material.findById(updateData.id).exec();			
-	// 		})
-	// 		then(function(material) {
-	// 			material.vendor.should.equal(updateData.vendor);
-	// 			material.product_name.should.equal(updateData.product_name); });
-	// 	});
-	// });
