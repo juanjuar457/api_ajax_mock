@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const faker = require('faker');
+const faker = require('faker'); //manually put stuff for the diff params, don't need??
 const mongoose = require('mongoose');
 
 // this makes the should syntax available throughout
@@ -10,7 +10,7 @@ const should = chai.should();
 const {Material} = require('../models');
 const {app, runServer, closeServer} = require('../server');
 const {DATABASE_URL} = require('../config');
-
+//need to use test DB?? I nuked my whole db with delete test!!! 
 chai.use(chaiHttp);
 
 
@@ -78,10 +78,6 @@ function tearDownDb() {
 }
 
 describe('Material API resource', function() {
-  // we need each of these hook functions to return a promise
-  // otherwise we'd need to call a `done` callback. `runServer`,
-  // `seedRestaurantData` and `tearDownDb` each return a promise,
-  // so we return the value returned by these function calls.
 	  before(function() {
 	    return runServer(DATABASE_URL);
 	  });
@@ -100,29 +96,29 @@ describe('Material API resource', function() {
 
 
  // //whole thing is wrapped in a describe, like unit tests examples... 
-	// describe('DELETE endpoint', function() {
-	//     it('delete a material by id', function() {
-	//       let material;
-	//       return Material
-	//         .findOne()
-	//         .exec()
-	//         .then(function(_material) {
-	//           material = _material;
-	//           return chai.request(app).delete(`/materials/${material.id}`);
-	//         })
-	//         .then(function(res) {
-	//           res.should.have.status(204);
-	//           return Material.findById(Material.id).exec();
-	//         })
-	//         .then(function(_material) {
-	//           // when a variable's value is null, chaining `should`
-	//           // doesn't work. so `_restaurant.should.be.null` would raise
-	//           // an error. `should.be.null(_restaurant)` is how we can
-	//           // make assertions about a null value.
-	//           should.not.exist(_material);
-	//         })
-	//     })    
-	// })
+	describe('DELETE endpoint', function() {
+	    it('delete a material by id', function() {
+	      let material;
+	      return Material
+	        .findOne()
+	        .exec()
+	        .then(function(_material) {
+	          material = _material;
+	          return chai.request(app).delete(`/materials/${material.id}`);
+	        })
+	        .then(function(res) {
+	          res.should.have.status(204);
+	          return Material.findById(Material.id).exec();
+	        })
+	        .then(function(_material) {
+	          // when a variable's value is null, chaining `should`
+	          // doesn't work. so `_restaurant.should.be.null` would raise
+	          // an error. `should.be.null(_restaurant)` is how we can
+	          // make assertions about a null value.
+	          should.not.exist(_material);
+	        })
+	    })    
+	})
 	//***** pick up here DON't FORGET POST!!!!! should be easy! check post in server! 
 	 describe('GET endpoint', function() {
 
@@ -148,11 +144,10 @@ describe('Material API resource', function() {
         })
         .then(function(count) {
           res.body.materials.should.have.length.of(count);
-        });
-    });
+        	});
+   		});
 
-
-    it('should return restaurants with right fields', function() {
+    	it('should return materials with right fields', function() {
       // Strategy: Get back all restaurants, and ensure they have expected keys
 
       let resMaterial;
@@ -181,12 +176,50 @@ describe('Material API resource', function() {
           resMaterial.catalog_number.should.equal(material.catalog_number);
           resMaterial.unit_size.should.equal(material.unit_size);
           resMaterial.units.should.equal(material.units);
+        	});
+   		 });
+  	});
+	   describe('POST endpoint test ', function() {
+    // strategy: make a POST request with data,
+    // then prove that the restaurant we get back has
+    // right keys, and that `id` is there (which means
+    // the data was inserted into db)
+    it('should add a new material', function() {
+
+      const newMaterial = generateMaterialData();
+      let mostRecentGrade;
+
+      return chai.request(app)
+        .post('/materials')
+        .send(newMaterial)
+        .then(function(res) {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.should.be.a('object');
+          res.body.should.include.keys(
+            'id', 'vendor', 'quantity', 'product_name', 'catalog_number', 'unit_size','units');
+                  // cause Mongo should have created id on insertion
+          res.body.id.should.not.be.null;
+          res.body.vendor.should.equal(newMaterial.vendor);
+          res.body.quantity.should.equal(newMaterial.quantity);
+          res.body.product_name.should.equal(newMaterial.product_name);
+          res.body.catalog_number.should.equal(newMaterial.catalog_number);
+          res.body.unit_size.should.equal(newMaterial.unit_size);
+          res.body.units.should.equal(newMaterial.units);
+          return Material.findById(res.body.id);
+        })
+        .then(function(material) {
+          material.vendor.should.equal(newMaterial.vendor);
+          material.quantity.should.equal(newMaterial.quantity);
+          material.product_name.should.equal(newMaterial.product_name);
+          material.catalog_number.should.equal(newMaterial.catalog_number);
+          material.unit_size.should.equal(newMaterial.unit_size)
+          material.units.should.equal(newMaterial.units)
         });
     });
   });
-
-
-
+}); 
+	//everything is wrapped in the 1st describe from the top! 
 	//**************PUT TEST 	
 	//should it have update data with everything?? 
 	//we're adding onBackOrder with the dom logic function on the client... doing ajax 
@@ -217,6 +250,3 @@ describe('Material API resource', function() {
 	// 			material.product_name.should.equal(updateData.product_name); });
 	// 	});
 	// });
-}); //everything is wrapped in the 1st describe form the top! 
-
-
